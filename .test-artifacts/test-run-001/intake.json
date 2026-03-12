@@ -1,0 +1,19 @@
+{
+  "componentName": "Button",
+  "description": "A composable Button component with multiple variants, sizes, loading state, and optional icon slots. Compatible with Radix/shadcn composability patterns.",
+  "requirements": [
+    "Support variant prop with values: primary, secondary, ghost",
+    "Support size prop with values: sm, md, lg",
+    "Support loading state that disables interaction and shows a spinner",
+    "Support optional leftIcon and rightIcon slots",
+    "Use forwardRef for ref forwarding",
+    "API should be composable and compatible with Radix/shadcn patterns",
+    "Must be fully accessible with keyboard navigation"
+  ],
+  "constraints": [
+    "TypeScript only",
+    "React 18+",
+    "No external dependencies beyond React",
+    "Must support server-side rendering"
+  ]
+}
