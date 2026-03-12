@@ -1,0 +1,111 @@
+{
+  "componentName": "Button",
+  "props": [
+    {
+      "name": "variant",
+      "type": "'primary' | 'secondary' | 'ghost'",
+      "required": false,
+      "default": "'primary'",
+      "description": "Visual style variant of the button"
+    },
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "required": false,
+      "default": "'md'",
+      "description": "Size of the button affecting padding and font size"
+    },
+    {
+      "name": "loading",
+      "type": "boolean",
+      "required": false,
+      "default": "false",
+      "description": "When true, shows a loading spinner and disables interaction"
+    },
+    {
+      "name": "leftIcon",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Icon element rendered before the button label"
+    },
+    {
+      "name": "rightIcon",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Icon element rendered after the button label"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "required": false,
+      "default": "false",
+      "description": "Whether the button is disabled"
+    },
+    {
+      "name": "children",
+      "type": "React.ReactNode",
+      "required": true,
+      "description": "Button label content"
+    },
+    {
+      "name": "asChild",
+      "type": "boolean",
+      "required": false,
+      "default": "false",
+      "description": "When true, merges props onto the child element instead of rendering a <button>"
+    }
+  ],
+  "variants": [
+    {
+      "name": "variant",
+      "values": [
+        "primary",
+        "secondary",
+        "ghost"
+      ]
+    },
+    {
+      "name": "size",
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ]
+    }
+  ],
+  "accessibility": {
+    "role": "button",
+    "ariaAttributes": [
+      "aria-disabled when loading or disabled",
+      "aria-busy when loading",
+      "aria-label supported for icon-only buttons"
+    ],
+    "keyboardInteractions": [
+      {
+        "key": "Enter",
+        "action": "Activates the button"
+      },
+      {
+        "key": "Space",
+        "action": "Activates the button"
+      },
+      {
+        "key": "Tab",
+        "action": "Moves focus to/from the button"
+      }
+    ]
+  },
+  "themingNotes": "Uses CSS custom properties (--button-*) for colours, spacing, and typography. Each variant maps to a set of custom property overrides via data-variant attribute.",
+  "acceptanceCriteria": [
+    "Renders as a <button> element by default",
+    "Applies correct styles for each variant",
+    "Applies correct padding/font-size for each size",
+    "Shows loading spinner and sets aria-busy when loading=true",
+    "Disables click handler when loading or disabled",
+    "Renders leftIcon before children and rightIcon after children",
+    "Forwards ref to the underlying button element",
+    "Supports asChild pattern for custom element rendering",
+    "Is keyboard accessible (Enter and Space activate)",
+    "Passes automated a11y checks (axe-core)"
+  ]
+}
