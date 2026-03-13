@@ -1,5 +1,7 @@
 import { resolve } from 'node:path';
 import { FakeLlmProvider } from './llm/fake.js';
+import { AnthropicProvider } from './llm/anthropic.js';
+import type { LlmProvider } from './llm/llm.js';
 import { loadSkill } from './orchestrator/skillLoader.js';
 import { runOrchestrator } from './orchestrator/orchestrator.js';
 
@@ -14,45 +16,69 @@ function generateRunId(): string {
   return `${date}-${time}-${hex}`;
 }
 
-function parseArgs(argv: string[]): { skill: string; input: string } {
+interface CliArgs {
+  skill: string;
+  input: string;
+  provider: 'fake' | 'anthropic';
+  model?: string;
+}
+
+function parseArgs(argv: string[]): CliArgs {
   let skill = 'react_component_delivery';
   let input = DEFAULT_INPUT;
+  let provider: 'fake' | 'anthropic' = 'fake';
+  let model: string | undefined;
 
   for (let i = 2; i < argv.length; i++) {
     if (argv[i] === '--skill' && argv[i + 1]) {
       skill = argv[++i];
     } else if (argv[i] === '--input' && argv[i + 1]) {
       input = argv[++i];
+    } else if (argv[i] === '--provider' && argv[i + 1]) {
+      provider = argv[++i] as 'fake' | 'anthropic';
+    } else if (argv[i] === '--model' && argv[i + 1]) {
+      model = argv[++i];
     }
   }
 
-  return { skill, input };
+  return { skill, input, provider, model };
+}
+
+function createLlm(args: CliArgs): LlmProvider {
+  switch (args.provider) {
+    case 'anthropic':
+      return new AnthropicProvider({ model: args.model });
+    case 'fake':
+    default:
+      return new FakeLlmProvider();
+  }
 }
 
 async function main(): Promise<void> {
-  const { skill: skillName, input } = parseArgs(process.argv);
+  const args = parseArgs(process.argv);
   const runId = generateRunId();
 
   const projectRoot = resolve(import.meta.dirname, '..');
-  const skillDir = resolve(projectRoot, 'ai', 'skills', skillName);
+  const skillDir = resolve(projectRoot, 'ai', 'skills', args.skill);
   const artifactsDir = resolve(projectRoot, 'artifacts');
   const outputDir = resolve(projectRoot, 'output');
 
   console.log(`[orchestrator] Run ID: ${runId}`);
-  console.log(`[orchestrator] Loading skill: ${skillName}`);
+  console.log(`[orchestrator] Loading skill: ${args.skill}`);
+  console.log(`[orchestrator] Provider: ${args.provider}`);
 
   const skill = await loadSkill(skillDir);
   console.log(
     `[orchestrator] Loaded skill: ${skill.meta.name} (${skill.meta.states.length} states)`,
   );
 
-  const llm = new FakeLlmProvider();
+  const llm = createLlm(args);
 
   const result = await runOrchestrator({
     skill,
     llm,
     runId,
-    input,
+    input: args.input,
     artifactsDir,
     outputDir,
   });
